@@ -10,8 +10,10 @@ lazy val configSettings: Seq[Setting[_]] = Seq(
       val sv = scalaVersion.value
       Seq(
         CrossVersion.partialVersion(sv) match {
-          case Some((2, 13)) => file(dir.getPath ++ "-2.13+")
-          case _             => file(dir.getPath ++ "-2.13-")
+          case Some((2, minor)) if minor < 13 =>
+            file(dir.getPath ++ "-2.13-")
+          case _ =>
+            file(dir.getPath ++ "-2.13+")
         },
         CrossVersion.partialVersion(sv) match {
           case Some((2, _))  => file(dir.getPath ++ "-2.x")
