@@ -41,7 +41,7 @@ lazy val xml = crossProject(JSPlatform, JVMPlatform)
     scalacOptions ++= {
       val opts =
         if (isDotty.value)
-          "-language:Scala2"
+          "-language:Scala2Compat"
         else
           // Compiler team advised avoiding the -Xsource:2.14 option for releases.
           // The output with -Xsource should be periodically checked, though.
