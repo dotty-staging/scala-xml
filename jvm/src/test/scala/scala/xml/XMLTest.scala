@@ -35,7 +35,7 @@ class XMLTestJVM {
     val c = new Node {
       def label = "hello"
       override def hashCode() =
-        Utility.hashCode(prefix, label, attributes.hashCode(), scope.hashCode(), child);
+        Utility.hashCode(prefix, label, this.attributes.hashCode(), scope.hashCode(), child);
       def child = Elem(null, "world", e, sc);
       //def attributes = e;
       override def text = ""
@@ -315,7 +315,7 @@ class XMLTestJVM {
     val inputStream = new java.io.ByteArrayInputStream(outputStream.toByteArray)
     val streamReader = new java.io.InputStreamReader(inputStream, XML.encoding)
 
-    def unescapeQuotes(str: String) = 
+    def unescapeQuotes(str: String) =
       "&quot;".r.replaceFirstIn(str, "\"")
     val xmlFixed = unescapeQuotes(xml.toString)
     assertEquals(xmlFixed, XML.load(streamReader).toString)
@@ -656,7 +656,7 @@ class XMLTestJVM {
     val x = <a b="c"><d/><e><f g="h"></f><i/></e></a>
     val formatted = pp.format(x)
     val expected =
-      """|<a 
+      """|<a
          |b="c">
          |  <d
          |  />
