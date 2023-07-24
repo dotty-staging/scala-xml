@@ -26,14 +26,14 @@ import scala.collection.Seq
 class PrefixedAttribute(
   val pre: String,
   val key: String,
-  val value: Seq[Node],
+  val value: Seq[Node]|Null,
   val next1: MetaData)
   extends Attribute {
   val next = if (value ne null) next1 else next1.remove(key)
 
   /** same as this(pre, key, Text(value), next), or no attribute if value is null */
-  def this(pre: String, key: String, value: String, next: MetaData) =
-    this(pre, key, if (value ne null) Text(value) else null: NodeSeq, next)
+  def this(pre: String, key: String, value: String|Null, next: MetaData) =
+    this(pre, key, if (value != null) Text(value) else null: NodeSeq|Null, next)
 
   /** same as this(pre, key, value.get, next), or no attribute if value is None */
   def this(pre: String, key: String, value: Option[Seq[Node]], next: MetaData) =
@@ -50,13 +50,13 @@ class PrefixedAttribute(
     owner.getNamespace(pre)
 
   /** forwards the call to next (because caller looks for unprefixed attribute */
-  def apply(key: String): Seq[Node] = next(key)
+  def apply(key: String): Seq[Node]|Null = next(key)
 
   /**
    * gets attribute value of qualified (prefixed) attribute with given key
    */
-  def apply(namespace: String, scope: NamespaceBinding, key: String): Seq[Node] = {
-    if (key == this.key && scope.getURI(pre) == namespace)
+  def apply(namespace: String|Null, scope: NamespaceBinding|Null, key: String): Seq[Node]|Null = {
+    if (key == this.key && scope.nn.getURI(pre) == namespace)
       value
     else
       next(namespace, scope, key)

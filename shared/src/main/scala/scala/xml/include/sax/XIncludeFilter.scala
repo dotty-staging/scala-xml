@@ -226,7 +226,7 @@ class XIncludeFilter extends XMLFilterImpl {
   // convenience method for error messages
   private def getLocation(): String = {
     var locationString = ""
-    val locator = locators.peek().asInstanceOf[Locator]
+    val locator = locators.peek().asInstanceOf[Locator|Null]
     var publicID = ""
     var systemID = ""
     var column = -1
@@ -256,10 +256,10 @@ class XIncludeFilter extends XMLFilterImpl {
    * be downloaded from the specified URL
    * or if the encoding is not recognized
    */
-  private def includeTextDocument(url: String, encoding1: String): Unit = {
+  private def includeTextDocument(url: String, encoding1: String|Null): Unit = {
     var encoding = encoding1
     if (encoding == null || encoding.trim().equals("")) encoding = "UTF-8"
-    var source: URL = null
+    var source: URL|Null = null
     try {
       val base = bases.peek().asInstanceOf[URL]
       source = new URL(base, url)
@@ -272,7 +272,7 @@ class XIncludeFilter extends XMLFilterImpl {
     }
 
     try {
-      val uc = source.openConnection()
+      val uc = source.nn.openConnection()
       val in = new BufferedInputStream(uc.getInputStream())
       val encodingFromHeader = uc.getContentEncoding()
       var contentType = uc.getContentType()
@@ -305,7 +305,7 @@ class XIncludeFilter extends XMLFilterImpl {
           + encoding + getLocation(), e)
       case e: IOException =>
         throw new SAXException("Document not found: "
-          + source.toExternalForm() + getLocation(), e)
+          + source.nn.toExternalForm() + getLocation(), e)
     }
 
   }

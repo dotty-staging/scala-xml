@@ -18,7 +18,7 @@ package include
  *  A `CircularIncludeException` is thrown when an included document attempts
  *  to include itself or one of its ancestor documents.
  */
-class CircularIncludeException(message: String) extends XIncludeException {
+class CircularIncludeException(message: String|Null) extends XIncludeException {
 
   /**
    * Constructs a `CircularIncludeException` with `'''null'''`.

@@ -131,7 +131,7 @@ class XIncluder(outs: OutputStream, encoding: String) extends ContentHandler wit
   private var inDTD: Boolean = false
   private var entities = List.empty[String]
 
-  def startDTD(name: String, publicID: String, systemID: String): Unit = {
+  def startDTD(name: String, publicID: String|Null, systemID: String|Null): Unit = {
     inDTD = true
     // if this is the source document, output a DOCTYPE declaration
     if (entities.isEmpty) {
@@ -161,14 +161,14 @@ class XIncluder(outs: OutputStream, encoding: String) extends ContentHandler wit
 
   // Just need this reference so we can ask if a comment is
   // inside an include element or not
-  private var filter: XIncludeFilter = null
+  private var filter: XIncludeFilter|Null = null
 
   def setFilter(filter: XIncludeFilter): Unit = {
     this.filter = filter
   }
 
   def comment(ch: Array[Char], start: Int, length: Int): Unit = {
-    if (!inDTD && !filter.insideIncludeElement()) {
+    if (!inDTD && !filter.nn.insideIncludeElement()) {
       try {
         out.write("<!--")
         out.write(ch, start, length)

@@ -36,7 +36,7 @@ object MetaData {
    * returns normalized MetaData, with all duplicates removed and namespace prefixes resolved to
    *  namespace URIs via the given scope.
    */
-  def normalize(attribs: MetaData, scope: NamespaceBinding): MetaData = {
+  def normalize(attribs: MetaData, scope: NamespaceBinding|Null): MetaData = {
     def iterate(md: MetaData, normalized_attribs: MetaData, set: Set[String]): MetaData = {
       if (md eq Null) {
         normalized_attribs
@@ -57,15 +57,15 @@ object MetaData {
   /**
    * returns key if md is unprefixed, pre+key is md is prefixed
    */
-  def getUniversalKey(attrib: MetaData, scope: NamespaceBinding) = attrib match {
-    case prefixed: PrefixedAttribute     => scope.getURI(prefixed.pre) + prefixed.key
+  def getUniversalKey(attrib: MetaData, scope: NamespaceBinding|Null) = attrib match {
+    case prefixed: PrefixedAttribute     => scope.nn.getURI(prefixed.pre).asInstanceOf[String] + prefixed.key
     case unprefixed: UnprefixedAttribute => unprefixed.key
   }
 
   /**
    *  returns MetaData with attributes updated from given MetaData
    */
-  def update(attribs: MetaData, scope: NamespaceBinding, updates: MetaData): MetaData =
+  def update(attribs: MetaData, scope: NamespaceBinding|Null, updates: MetaData): MetaData =
     normalize(concatenate(updates, attribs), scope)
 
 }
@@ -104,7 +104,7 @@ abstract class MetaData
    * @param  key
    * @return value as Seq[Node] if key is found, null otherwise
    */
-  def apply(key: String): Seq[Node]
+  def apply(key: String): Seq[Node]|Null
 
   /**
    * convenience method, same as `apply(namespace, owner.scope, key)`.
@@ -113,7 +113,7 @@ abstract class MetaData
    *  @param owner the element owning this attribute list
    *  @param key   the attribute key
    */
-  final def apply(namespace_uri: String, owner: Node, key: String): Seq[Node] =
+  final def apply(namespace_uri: String, owner: Node, key: String): Seq[Node]|Null =
     apply(namespace_uri, owner.scope, key)
 
   /**
@@ -124,7 +124,7 @@ abstract class MetaData
    * @param  k   to be looked for
    * @return value as Seq[Node] if key is found, null otherwise
    */
-  def apply(namespace_uri: String, scp: NamespaceBinding, k: String): Seq[Node]
+  def apply(namespace_uri: String|Null, scp: NamespaceBinding|Null, k: String): Seq[Node]|Null
 
   /**
    * returns a copy of this MetaData item with next field set to argument.
@@ -132,7 +132,7 @@ abstract class MetaData
   def copy(next: MetaData): MetaData
 
   /** if owner is the element of this metadata item, returns namespace */
-  def getNamespace(owner: Node): String
+  def getNamespace(owner: Node): String|Null
 
   def hasNext = (Null != next)
 
@@ -166,14 +166,14 @@ abstract class MetaData
   def key: String
 
   /** returns value of this MetaData item */
-  def value: Seq[Node]
+  def value: Seq[Node]|Null
 
   /**
    * Returns a String containing "prefix:key" if the first key is
    *  prefixed, and "key" otherwise.
    */
   def prefixedKey = this match {
-    case x: Attribute if x.isPrefixed => x.pre + ":" + key
+    case x: Attribute if x.isPrefixed => x.pre.nn + ":" + key
     case _                            => key
   }
 
@@ -181,7 +181,7 @@ abstract class MetaData
    * Returns a Map containing the attributes stored as key/value pairs.
    */
   def asAttrMap: Map[String, String] =
-    (iterator map (x => (x.prefixedKey, x.value.text))).toMap
+    (iterator map (x => (x.prefixedKey, x.value.nn.text))).toMap
 
   /** returns Null or the next MetaData item */
   def next: MetaData
@@ -192,7 +192,7 @@ abstract class MetaData
    * @param  key
    * @return value in Some(Seq[Node]) if key is found, None otherwise
    */
-  final def get(key: String): Option[Seq[Node]] = Option(apply(key))
+  final def get(key: String): Option[Seq[Node]] = Option.fromNullable(apply(key))
 
   /** same as get(uri, owner.scope, key) */
   final def get(uri: String, owner: Node, key: String): Option[Seq[Node]] =
@@ -206,8 +206,8 @@ abstract class MetaData
    * @param  key to be looked fore
    * @return value as Some[Seq[Node]] if key is found, None otherwise
    */
-  final def get(uri: String, scope: NamespaceBinding, key: String): Option[Seq[Node]] =
-    Option(apply(uri, scope, key))
+  final def get(uri: String|Null, scope: NamespaceBinding|Null, key: String): Option[Seq[Node]] =
+    Option.fromNullable(apply(uri, scope, key))
 
   protected def toString1(): String = sbToString(toString1)
 
@@ -228,7 +228,7 @@ abstract class MetaData
 
   def remove(key: String): MetaData
 
-  def remove(namespace: String, scope: NamespaceBinding, key: String): MetaData
+  def remove(namespace: String|Null, scope: NamespaceBinding|Null, key: String): MetaData
 
   final def remove(namespace: String, owner: Node, key: String): MetaData =
     remove(namespace, owner.scope, key)

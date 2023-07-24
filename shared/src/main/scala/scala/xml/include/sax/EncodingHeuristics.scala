@@ -49,9 +49,9 @@ object EncodingHeuristics {
    * @return         the name of the encoding.
    */
   def readEncodingFromStream(in: InputStream): String = {
-    var ret: String = null
+    var ret: String|Null = null
     val bytesToRead = 1024 // enough to read most XML encoding declarations
-    def resetAndRet = { in.reset; ret }
+    def resetAndRet = { in.reset; ret.nn }
 
     // This may fail if there are a lot of space characters before the end
     // of the encoding declaration

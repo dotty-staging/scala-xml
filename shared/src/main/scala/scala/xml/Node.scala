@@ -47,10 +47,10 @@ object Node {
 abstract class Node extends NodeSeq {
 
   /** prefix of this node */
-  def prefix: String = null
+  def prefix: String|Null = null
 
   /** label of this node. I.e. "foo" for &lt;foo/&gt;) */
-  def label: String
+  def label: String|Null
 
   /**
    * used internally. Atom/Molecule = -1 PI = -2 Comment = -3 EntityRef = -5
@@ -66,7 +66,7 @@ abstract class Node extends NodeSeq {
    *  is TopScope, which means there are no namespace bindings except the
    *  predefined one for "xml".
    */
-  def scope: NamespaceBinding = TopScope
+  def scope: NamespaceBinding|Null = TopScope
 
   /**
    *  convenience, same as `getNamespace(this.prefix)`
@@ -81,7 +81,7 @@ abstract class Node extends NodeSeq {
    * @return    the namespace if `scope != null` and prefix was
    *            found, else `null`
    */
-  def getNamespace(pre: String): String = if (scope eq null) null else scope.getURI(pre)
+  def getNamespace(pre: String|Null): String|Null = if (scope eq null) null else scope.nn.getURI(pre)
 
   /**
    * Convenience method, looks up an unprefixed attribute in attributes of this node.
@@ -194,7 +194,7 @@ abstract class Node extends NodeSeq {
   /**
    * Returns a type symbol (e.g. DTD, XSD), default `'''null'''`.
    */
-  def xmlType(): TypeSymbol = null
+  def xmlType(): TypeSymbol|Null = null
 
   /**
    * Returns a text representation of this node. Note that this is not equivalent to

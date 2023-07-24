@@ -137,20 +137,20 @@ object Utility extends AnyRef with parsing.TokenTests {
    *
    * @return    `'''null'''` if `ref` was not a predefined entity.
    */
-  final def unescape(ref: String, s: StringBuilder): StringBuilder =
+  final def unescape(ref: String, s: StringBuilder): StringBuilder|Null =
     ((unescMap get ref) map (s append _)).orNull
 
   /**
    * Returns a set of all namespaces used in a sequence of nodes
    * and all their descendants, including the empty namespaces.
    */
-  def collectNamespaces(nodes: Seq[Node]): mutable.Set[String] =
-    nodes.foldLeft(new mutable.HashSet[String]) { (set, x) => collectNamespaces(x, set); set }
+  def collectNamespaces(nodes: Seq[Node]): mutable.Set[String|Null] =
+    nodes.foldLeft(new mutable.HashSet[String|Null]) { (set, x) => collectNamespaces(x, set); set }
 
   /**
    * Adds all namespaces in node to set.
    */
-  def collectNamespaces(n: Node, set: mutable.Set[String]): Unit = {
+  def collectNamespaces(n: Node, set: mutable.Set[String|Null]): Unit = {
     if (n.doCollectNamespaces) {
       set += n.namespace
       for (a <- n.attributes) a match {
@@ -205,7 +205,7 @@ object Utility extends AnyRef with parsing.TokenTests {
    */
   def serialize(
     x: Node,
-    pscope: NamespaceBinding = TopScope,
+    pscope: NamespaceBinding|Null = TopScope,
     sb: StringBuilder = new StringBuilder,
     stripComments: Boolean = false,
     decodeEntities: Boolean = true,
@@ -222,7 +222,7 @@ object Utility extends AnyRef with parsing.TokenTests {
           sb.append('<')
           el.nameToString(sb)
           if (el.attributes ne null) el.attributes.buildString(sb)
-          el.scope.buildString(sb, pscope)
+          el.scope.nn.buildString(sb, pscope)
           if (el.child.isEmpty &&
             (minimizeTags == MinimizeMode.Always ||
               (minimizeTags == MinimizeMode.Default && el.minimizeEmpty))) {
@@ -242,7 +242,7 @@ object Utility extends AnyRef with parsing.TokenTests {
 
   def sequenceToXML(
     children: Seq[Node],
-    pscope: NamespaceBinding = TopScope,
+    pscope: NamespaceBinding|Null = TopScope,
     sb: StringBuilder = new StringBuilder,
     stripComments: Boolean = false,
     decodeEntities: Boolean = true,
@@ -273,7 +273,7 @@ object Utility extends AnyRef with parsing.TokenTests {
   /**
    * Returns a hashcode for the given constituents of a node
    */
-  def hashCode(pre: String, label: String, attribHashCode: Int, scpeHash: Int, children: Seq[Node]) =
+  def hashCode(pre: String|Null, label: String|Null, attribHashCode: Int, scpeHash: Int, children: Seq[Node]) =
     scala.util.hashing.MurmurHash3.orderedHash(label +: attribHashCode +: scpeHash +: children, pre.##)
 
   def appendQuoted(s: String): String = sbToString(appendQuoted(s, _))
@@ -300,7 +300,7 @@ object Utility extends AnyRef with parsing.TokenTests {
     sb.append('"')
   }
 
-  def getName(s: String, index: Int): String = {
+  def getName(s: String, index: Int): String|Null = {
     if (index >= s.length) null
     else {
       val xs = s drop index
@@ -313,7 +313,7 @@ object Utility extends AnyRef with parsing.TokenTests {
    * Returns `'''null'''` if the value is a correct attribute value,
    * error message if it isn't.
    */
-  def checkAttributeValue(value: String): String = {
+  def checkAttributeValue(value: String): String|Null = {
     var i = 0
     while (i < value.length) {
       value.charAt(i) match {
@@ -323,7 +323,7 @@ object Utility extends AnyRef with parsing.TokenTests {
           val n = getName(value, i + 1)
           if (n eq null)
             return "malformed entity reference in attribute value [" + value + "]"
-          i = i + n.length + 1
+          i = i + n.nn.length + 1
           if (i >= value.length || value.charAt(i) != ';')
             return "malformed entity reference in attribute value [" + value + "]"
         case _ =>
@@ -335,7 +335,7 @@ object Utility extends AnyRef with parsing.TokenTests {
 
   def parseAttributeValue(value: String): Seq[Node] = {
     val sb = new StringBuilder
-    var rfb: StringBuilder = null
+    var rfb: StringBuilder|Null = null
     val nb = new NodeBuffer()
 
     val it = value.iterator
@@ -349,7 +349,7 @@ object Utility extends AnyRef with parsing.TokenTests {
           val theChar = parseCharRef ({ () => c }, { () => c = it.next() }, { s => throw new RuntimeException(s) }, { s => throw new RuntimeException(s) })
           sb.append(theChar)
         } else {
-          if (rfb eq null) rfb = new StringBuilder()
+          if (rfb == null) rfb = new StringBuilder() // workaround for issue #18282
           rfb append c
           c = it.next()
           while (c != ';') {

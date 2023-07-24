@@ -91,7 +91,7 @@ object XML extends XMLLoader[Elem] {
     node: Node,
     enc: String = "UTF-8",
     xmlDecl: Boolean = false,
-    doctype: dtd.DocType = null): Unit =
+    doctype: dtd.DocType|Null = null): Unit =
     {
       val fos = new FileOutputStream(filename)
       val w = Channels.newWriter(fos.getChannel(), enc)
@@ -111,7 +111,7 @@ object XML extends XMLLoader[Elem] {
    *  @param xmlDecl  if true, write xml declaration
    *  @param doctype  if not null, write doctype declaration
    */
-  final def write(w: java.io.Writer, node: Node, enc: String, xmlDecl: Boolean, doctype: dtd.DocType, minimizeTags: MinimizeMode.Value = MinimizeMode.Default): Unit = {
+  final def write(w: java.io.Writer, node: Node, enc: String, xmlDecl: Boolean, doctype: dtd.DocType|Null, minimizeTags: MinimizeMode.Value = MinimizeMode.Default): Unit = {
     /* TODO: optimize by giving writer parameter to toXML*/
     if (xmlDecl) w.write("<?xml version='1.0' encoding='" + enc + "'?>\n")
     if (doctype ne null) w.write(doctype.toString() + "\n")

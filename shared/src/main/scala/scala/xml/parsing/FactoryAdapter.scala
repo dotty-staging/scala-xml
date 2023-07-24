@@ -40,9 +40,9 @@ trait ConsoleErrorHandler extends DefaultHandler2 {
  *  underlying SAX parser.
  */
 abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Node] {
-  var prolog: List[Node] = List.empty
+  var prolog: List[Node|Null] = List.empty
   var rootElem: Node = _
-  var epilogue: List[Node] = List.empty
+  var epilogue: List[Node|Null] = List.empty
 
   val buffer: StringBuilder = new StringBuilder()
   private var inCDATA: Boolean = false
@@ -60,7 +60,7 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
     * 
     * @since 2.0.0 
     */
-  var hStack: List[Node] = List.empty // [ element ] contains siblings
+  var hStack: List[Node|Null] = List.empty // [ element ] contains siblings
   /** List of element names
     * 
     * Previously was a mutable [[scala.collection.mutable.Stack Stack]], but is now a mutable reference to an immutable [[scala.collection.immutable.List List]].
@@ -94,7 +94,7 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
    * @param chIter
    * @return a new XML element.
    */
-  def createNode(pre: String, elemName: String, attribs: MetaData,
+  def createNode(pre: String|Null, elemName: String, attribs: MetaData,
                  scope: NamespaceBinding, chIter: List[Node]): Node // abstract
 
   /**
@@ -163,7 +163,7 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
    */
   override def endCDATA(): Unit = captureText()
 
-  private def splitName(s: String): (String, String) = {
+  private def splitName(s: String): (String|Null, String) = {
     val idx = s indexOf ':'
     if (idx < 0) (null, s)
     else (s take idx, s drop (idx + 1))
@@ -202,13 +202,13 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
         val qname = attributes getQName i
         val value = attributes getValue i
         val (pre, key) = splitName(qname)
-        def nullIfEmpty(s: String): String = if (s == "") null else s
+        def nullIfEmpty(s: String): String|Null = if (s == "") null else s
 
         if (pre == "xmlns" || (pre == null && qname == "xmlns")) {
           val arg = if (pre == null) null else key
           scpe = NamespaceBinding(arg, nullIfEmpty(value), scpe)
         } else
-          m = Attribute(Option(pre), key, Text(value), m)
+          m = Attribute(Option.fromNullable(pre), key, Text(value), m)
       }
 
       // Add namespace bindings for the prefix mappings declared by this element
@@ -257,7 +257,7 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
     attribStack = attribStack.tail
 
     // reverse order to get it right
-    val v = hStack.takeWhile(_ != null).reverse
+    val v = hStack.takeWhile(_ != null).reverse.asInstanceOf[List[Node]]
     hStack = hStack.dropWhile(_ != null) match {
       case null :: hs => hs
       case hs => hs
@@ -271,7 +271,7 @@ abstract class FactoryAdapter extends DefaultHandler2 with factory.XMLLoader[Nod
     hStack = rootElem :: hStack
     curTag = tagStack.head
     tagStack = tagStack.tail
-    capture = curTag != null && nodeContainsText(curTag) // root level
+    capture = (curTag:Any) != null && nodeContainsText(curTag) // root level
   }
 
   override def endDocument(): Unit =  {

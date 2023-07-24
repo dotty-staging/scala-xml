@@ -25,12 +25,12 @@ import Utility.sbToString
  *  @author  Burak Emir
  */
 @SerialVersionUID(0 - 2518644165573446725L)
-case class NamespaceBinding(prefix: String, uri: String, parent: NamespaceBinding) extends AnyRef with Equality {
+case class NamespaceBinding(prefix: String|Null, uri: String|Null, parent: NamespaceBinding|Null) extends AnyRef with Equality {
   if (prefix == "")
     throw new IllegalArgumentException("zero length prefix not allowed")
 
-  def getURI(_prefix: String): String =
-    if (prefix == _prefix) uri else parent getURI _prefix
+  def getURI(_prefix: String|Null): String|Null =
+    if (prefix == _prefix) uri else parent.nn getURI _prefix
 
   /**
    * Returns some prefix that is mapped to the URI.
@@ -39,16 +39,16 @@ case class NamespaceBinding(prefix: String, uri: String, parent: NamespaceBindin
    * @return the prefix that is mapped to the input URI, or null
    * if no prefix is mapped to the URI.
    */
-  def getPrefix(_uri: String): String =
-    if (_uri == uri) prefix else parent getPrefix _uri
+  def getPrefix(_uri: String): String|Null =
+    if (_uri == uri) prefix else parent.nn getPrefix _uri
 
   override def toString(): String = sbToString(buildString(_, TopScope))
 
-  private def shadowRedefined(stop: NamespaceBinding): NamespaceBinding = {
-    def prefixList(x: NamespaceBinding): List[String] =
+  private def shadowRedefined(stop: NamespaceBinding|Null): NamespaceBinding|Null = {
+    def prefixList(x: NamespaceBinding|Null): List[String|Null] =
       if ((x == null) || (x eq stop)) Nil
       else x.prefix :: prefixList(x.parent)
-    def fromPrefixList(l: List[String]): NamespaceBinding = l match {
+    def fromPrefixList(l: List[String|Null]): NamespaceBinding|Null = l match {
       case Nil     => stop
       case x :: xs => new NamespaceBinding(x, this.getURI(x), fromPrefixList(xs))
     }
@@ -70,19 +70,19 @@ case class NamespaceBinding(prefix: String, uri: String, parent: NamespaceBindin
 
   def basisForHashCode: Seq[Any] = List(prefix, uri, parent)
 
-  def buildString(stop: NamespaceBinding): String = sbToString(buildString(_, stop))
+  def buildString(stop: NamespaceBinding|Null): String = sbToString(buildString(_, stop))
 
-  def buildString(sb: StringBuilder, stop: NamespaceBinding): Unit = {
-    shadowRedefined(stop).doBuildString(sb, stop)
+  def buildString(sb: StringBuilder, stop: NamespaceBinding|Null): Unit = {
+    shadowRedefined(stop).nn.doBuildString(sb, stop)
   }
 
-  private def doBuildString(sb: StringBuilder, stop: NamespaceBinding): Unit = {
+  private def doBuildString(sb: StringBuilder, stop: NamespaceBinding|Null): Unit = {
     if (List(null, stop, TopScope).contains(this)) return
 
     val s = " xmlns%s=\"%s\"".format(
       (if (prefix != null) ":" + prefix else ""),
       (if (uri != null) uri else "")
     )
-    parent.doBuildString(sb append s, stop) // copy(ignore)
+    parent.nn.doBuildString(sb append s, stop) // copy(ignore)
   }
 }

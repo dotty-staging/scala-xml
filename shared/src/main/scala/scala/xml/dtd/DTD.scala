@@ -23,7 +23,7 @@ import scala.collection.Seq
  *  @author Burak Emir
  */
 abstract class DTD {
-  var externalID: ExternalID = null
+  var externalID: ExternalID|Null = null
   var decls: List[Decl] = Nil
   def notations: Seq[NotationDecl] = Nil
   def unparsedEntities: Seq[EntityDecl] = Nil

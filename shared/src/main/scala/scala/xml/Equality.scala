@@ -52,16 +52,16 @@ object Equality {
   /**
    * Note - these functions assume strict equality has already failed.
    */
-  def compareBlithely(x1: AnyRef, x2: String): Boolean = x1 match {
+  def compareBlithely(x1: AnyRef|Null, x2: String): Boolean = x1 match {
     case x: Atom[_] => x.data == x2
     case x: NodeSeq => x.text == x2
     case _          => false
   }
-  def compareBlithely(x1: AnyRef, x2: Node): Boolean = x1 match {
+  def compareBlithely(x1: AnyRef|Null, x2: Node): Boolean = x1 match {
     case x: NodeSeq if x.length == 1 => x2 == x(0)
     case _                           => false
   }
-  def compareBlithely(x1: AnyRef, x2: AnyRef): Boolean = {
+  def compareBlithely(x1: AnyRef|Null, x2: AnyRef|Null): Boolean = {
     if (x1 == null || x2 == null)
       return (x1 eq x2)
 

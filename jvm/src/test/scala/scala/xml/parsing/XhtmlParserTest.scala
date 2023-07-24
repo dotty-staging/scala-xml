@@ -30,7 +30,7 @@ class XhtmlParserTest {
   </body>
 </html>
 
-    assertEquals(expected, XhtmlParser(Source.fromString(xml)).theSeq)
+    assertEquals(expected, XhtmlParser(Source.fromString(xml)).nn.theSeq)
   }
 
   @Test
@@ -56,6 +56,6 @@ class XhtmlParserTest {
   </body>
 </html>
 
-    assertEquals(expected, XhtmlParser(Source.fromString(xml)).theSeq)
+    assertEquals(expected, XhtmlParser(Source.fromString(xml)).nn.theSeq)
   }
 }

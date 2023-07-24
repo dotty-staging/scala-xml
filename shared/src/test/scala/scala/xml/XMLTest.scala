@@ -402,9 +402,9 @@ Ours is the portal of hope, come as you are."
 
   @UnitTest
   def t5052: Unit = {
-    assertTrue(<elem attr={ null: String }/> xml_== <elem/>)
+    assertTrue(<elem attr={ null: String|Null }/> xml_== <elem/>)
     assertTrue(<elem attr={ None }/> xml_== <elem/>)
-    assertTrue(<elem/> xml_== <elem attr={ null: String }/>)
+    assertTrue(<elem/> xml_== <elem attr={ null: String|Null }/>)
     assertTrue(<elem/> xml_== <elem attr={ None }/>)
   }
 
@@ -417,9 +417,9 @@ Ours is the portal of hope, come as you are."
     assertHonorsIterableContract(<a y={ None }/>.attributes)
     assertHonorsIterableContract(<a y={ None } x=""/>.attributes)
     assertHonorsIterableContract(<a a="" y={ None }/>.attributes)
-    assertHonorsIterableContract(<a y={ null: String }/>.attributes)
-    assertHonorsIterableContract(<a y={ null: String } x=""/>.attributes)
-    assertHonorsIterableContract(<a a="" y={ null: String }/>.attributes)
+    assertHonorsIterableContract(<a y={ null: String|Null }/>.attributes)
+    assertHonorsIterableContract(<a y={ null: String|Null } x=""/>.attributes)
+    assertHonorsIterableContract(<a a="" y={ null: String|Null }/>.attributes)
   }
 
   @UnitTest
@@ -455,9 +455,9 @@ Ours is the portal of hope, come as you are."
   @UnitTest
   def attributes = {
     val noAttr = <t/>
-    val attrNull = <t a={ null: String }/>
+    val attrNull = <t a={ null: String|Null }/>
     val attrNone = <t a={ None: Option[Seq[Node]] }/>
-    val preAttrNull = <t p:a={ null: String }/>
+    val preAttrNull = <t p:a={ null: String|Null }/>
     val preAttrNone = <t p:a={ None: Option[Seq[Node]] }/>
     assertEquals(noAttr, attrNull)
     assertEquals(noAttr, attrNone)
@@ -465,8 +465,8 @@ Ours is the portal of hope, come as you are."
     assertEquals(noAttr, preAttrNone)
 
     val xml1 = <t b="1" d="2"/>
-    val xml2 = <t a={ null: String } p:a={ null: String } b="1" c={ null: String } d="2"/>
-    val xml3 = <t b="1" c={ null: String } d="2" a={ null: String } p:a={ null: String }/>
+    val xml2 = <t a={ null: String|Null } p:a={ null: String|Null } b="1" c={ null: String|Null } d="2"/>
+    val xml3 = <t b="1" c={ null: String|Null } d="2" a={ null: String|Null } p:a={ null: String|Null }/>
     assertEquals(xml1, xml2)
     assertEquals(xml1, xml3)
 

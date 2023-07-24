@@ -28,8 +28,8 @@ sealed abstract class ExternalID extends parsing.TokenTests {
   // public != null: PUBLIC " " publicLiteral " " [systemLiteral]
   // public == null: SYSTEM " " systemLiteral
   override def toString(): String = {
-    lazy val quotedSystemLiteral = quoted(systemId)
-    lazy val quotedPublicLiteral = quoted(publicId)
+    lazy val quotedSystemLiteral = quoted(systemId.nn)
+    lazy val quotedPublicLiteral = quoted(publicId.nn)
 
     if (publicId == null) "SYSTEM " + quotedSystemLiteral
     else "PUBLIC " + quotedPublicLiteral +
@@ -38,8 +38,8 @@ sealed abstract class ExternalID extends parsing.TokenTests {
   def buildString(sb: StringBuilder): StringBuilder =
     sb.append(this.toString())
 
-  def systemId: String
-  def publicId: String
+  def systemId: String|Null
+  def publicId: String|Null
 }
 
 /**
@@ -62,7 +62,7 @@ case class SystemID(systemId: String) extends ExternalID {
  *  @param  publicId the public identifier literal
  *  @param  systemId (can be null for notation pubIDs) the system identifier literal
  */
-case class PublicID(publicId: String, systemId: String) extends ExternalID {
+case class PublicID(publicId: String, systemId: String|Null) extends ExternalID {
   if (!checkPubID(publicId))
     throw new IllegalArgumentException("publicId must consist of PubidChars")
 

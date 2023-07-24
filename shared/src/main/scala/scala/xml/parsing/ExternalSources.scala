@@ -25,8 +25,8 @@ import scala.io.Source
 trait ExternalSources {
   self: ExternalSources with MarkupParser with MarkupHandler =>
 
-  def externalSource(systemId: String): Source = {
-    if (systemId startsWith "http:")
+  def externalSource(systemId: String|Null): Source = {
+    if (systemId.nn startsWith "http:")
       return Source fromURL new URL(systemId)
 
     val fileStr: String = input.descr match {

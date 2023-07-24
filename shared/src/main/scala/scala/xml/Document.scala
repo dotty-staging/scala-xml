@@ -39,10 +39,10 @@ class Document extends NodeSeq with Serializable {
   var children: Seq[Node] = _
 
   /** The element information item corresponding to the document element. */
-  var docElem: Node = _
+  var docElem: Node|Null = _
 
   /** The dtd that comes with the document, if any */
-  var dtd: scala.xml.dtd.DTD = _
+  var dtd: scala.xml.dtd.DTD|Null = _
 
   /**
    * An unordered set of notation information items, one for each notation
@@ -50,14 +50,14 @@ class Document extends NodeSeq with Serializable {
    *  has no value.
    */
   def notations: Seq[scala.xml.dtd.NotationDecl] =
-    dtd.notations
+    dtd.nn.notations
 
   /**
    * An unordered set of unparsed entity information items, one for each
    *  unparsed entity declared in the DTD.
    */
   def unparsedEntities: Seq[scala.xml.dtd.EntityDecl] =
-    dtd.unparsedEntities
+    dtd.nn.unparsedEntities
 
   /** The base URI of the document entity. */
   var baseURI: String = _
@@ -96,7 +96,7 @@ class Document extends NodeSeq with Serializable {
 
   // methods for NodeSeq
 
-  def theSeq: Seq[Node] = this.docElem
+  def theSeq: Seq[Node] = this.docElem.nn
 
   override def canEqual(other: Any) = other match {
     case _: Document => true

@@ -25,14 +25,14 @@ package include
  *
  * @param   message   the detail message.
  */
-class XIncludeException(message: String) extends Exception(message) {
+class XIncludeException(message: String|Null) extends Exception(message) {
 
   /**
    * uses `'''null'''` as its error detail message.
    */
   def this() = this(null)
 
-  private var rootCause: Throwable = null
+  private var rootCause: Throwable|Null = null
 
   /**
    * When an `IOException`, `MalformedURLException` or other generic
@@ -57,6 +57,6 @@ class XIncludeException(message: String) extends Exception(message) {
    * @return Throwable   the underlying exception which caused the
    *                     `XIncludeException` to be thrown
    */
-  def getRootCause(): Throwable = this.rootCause
+  def getRootCause(): Throwable|Null = this.rootCause
 
 }

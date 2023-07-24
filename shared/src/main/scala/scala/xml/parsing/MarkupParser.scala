@@ -49,7 +49,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
   /** if true, does not remove surplus whitespace */
   val preserveWS: Boolean
 
-  def externalSource(systemLiteral: String): Source
+  def externalSource(systemLiteral: String|Null): Source
 
   //
   // variables, values
@@ -130,9 +130,9 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
   /** character buffer, for names */
   protected val cbuf = new StringBuilder()
 
-  var dtd: DTD = null
+  var dtd: DTD|Null = null
 
-  protected var doc: Document = null
+  protected var doc: Document|Null = null
 
   def eof: Boolean = { ch; reachedEof }
 
@@ -230,7 +230,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
    *  [27]     Misc        ::= Comment | PI | S
    * }}}
    */
-  def document(): Document = {
+  def document(): Document|Null = {
     doc = new Document()
 
     this.dtd = null
@@ -241,13 +241,13 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
     }
 
     nextch() // is prolog ?
-    var children: NodeSeq = null
+    var children: NodeSeq|Null = null
     if ('?' == ch) {
       nextch()
       info_prolog = prolog()
-      doc.version = info_prolog._1
-      doc.encoding = info_prolog._2
-      doc.standAlone = info_prolog._3
+      doc.nn.version = info_prolog._1
+      doc.nn.encoding = info_prolog._2
+      doc.nn.standAlone = info_prolog._3
 
       children = content(TopScope) // DTD handled as side effect
     } else {
@@ -258,7 +258,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
     }
     //println("[MarkupParser::document] children now: "+children.toList)
     var elemCount = 0
-    var theNode: Node = null
+    var theNode: Node|Null = null
     for (c <- children) c match {
       case _: ProcInstr =>
       case _: Comment   =>
@@ -276,9 +276,9 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
       //Console.println(children.toList)
     }
 
-    doc.children = children
-    doc.docElem = theNode
-    doc
+    doc.nn.children = children
+    doc.nn.docElem = theNode
+    doc.nn
   }
 
   /** append Unicode character to name buffer*/
@@ -521,7 +521,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
    *  }}}
    */
   def parseDTD(): Unit = { // dirty but fast
-    var extID: ExternalID = null
+    var extID: ExternalID|Null = null
     if (this.dtd ne null)
       reportSyntaxError("unexpected character (DOCTYPE already defined")
     xToken("DOCTYPE")
@@ -562,7 +562,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
     }
     //this.dtd.initializeEntities();
     if (doc ne null)
-      doc.dtd = this.dtd
+      doc.nn.dtd = this.dtd
 
     handle.endDTD(n)
   }
@@ -671,7 +671,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
   //
 
   def extSubset(): Unit = {
-    var textdecl: (Option[String], Option[String]) = null
+    var textdecl: (Option[String], Option[String])|Null = null
     if (ch == '<') {
       nextch()
       if (ch == '?') {
@@ -837,7 +837,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
       val atpe = cbuf.toString
       cbuf.setLength(0)
 
-      val defdecl: DefaultDecl = ch match {
+      val defdecl: DefaultDecl|Null = ch match {
         case '\'' | '"' =>
           DEFAULT(fixed = false, xAttributeValue())
 
@@ -959,7 +959,7 @@ trait MarkupParser extends MarkupParserCommon with TokenTests {
     nextch()
   }
 
-  def pushExternal(systemId: String): Unit = {
+  def pushExternal(systemId: String|Null): Unit = {
     if (!eof)
       inpStack = curInput :: inpStack
 

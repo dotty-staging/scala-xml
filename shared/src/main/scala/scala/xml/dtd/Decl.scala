@@ -59,12 +59,12 @@ case class AttListDecl(name: String, attrs: List[AttrDecl])
  *  versions might provide a way to access the attribute types more
  *  directly.
  */
-case class AttrDecl(name: String, tpe: String, default: DefaultDecl) {
+case class AttrDecl(name: String, tpe: String, default: DefaultDecl|Null) {
   override def toString(): String = sbToString(buildString)
 
   def buildString(sb: StringBuilder): StringBuilder = {
     sb append "  " append name append ' ' append tpe append ' '
-    default buildString sb
+    default.nn buildString sb
   }
 
 }

@@ -8,7 +8,7 @@ class MetaDataTest {
   @Test
   def absentElementPrefixed1: Unit = {
     // type ascription to help overload resolution pick the right variant
-    assertEquals(null: Object, Null("za://foo.com", TopScope, "bar"))
+    assertEquals(null: Object|Null, Null("za://foo.com", TopScope, "bar"))
     assertEquals(null, Null("bar"))
   }
 
@@ -43,8 +43,8 @@ class MetaDataTest {
   def attributeExtractor: Unit = {
     def domatch(x:Node): Node = {
       x match {
-            case Node("foo", md @ UnprefixedAttribute(_, value, _), _*) if !value.isEmpty =>
-                 md("bar")(0)
+            case Node("foo", md @ UnprefixedAttribute(_, value, _), _*) if !value.nn.isEmpty =>
+                 md("bar").nn(0)
             case _ => new Atom(3)
       }
     }

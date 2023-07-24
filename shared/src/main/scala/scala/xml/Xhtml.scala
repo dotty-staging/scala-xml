@@ -44,7 +44,7 @@ object Xhtml {
 
   def toXhtml(
     x: Node,
-    pscope: NamespaceBinding = TopScope,
+    pscope: NamespaceBinding|Null = TopScope,
     sb: StringBuilder = new StringBuilder,
     stripComments: Boolean = false,
     decodeEntities: Boolean = false,
@@ -57,7 +57,7 @@ object Xhtml {
       }
       def shortForm =
         minimizeTags &&
-          (x.child == null || x.child.length == 0) &&
+          ((x.child:Any) == null || x.child.length == 0) &&
           (minimizableElements contains x.label)
 
       x match {
@@ -71,7 +71,7 @@ object Xhtml {
           sb.append('<')
           x.nameToString(sb)
           if (x.attributes ne null) x.attributes.buildString(sb)
-          x.scope.buildString(sb, pscope)
+          x.scope.nn.buildString(sb, pscope)
 
           if (shortForm) sb.append(" />")
           else {
@@ -89,7 +89,7 @@ object Xhtml {
    */
   def sequenceToXML(
     children: Seq[Node],
-    pscope: NamespaceBinding = TopScope,
+    pscope: NamespaceBinding|Null = TopScope,
     sb: StringBuilder = new StringBuilder,
     stripComments: Boolean = false,
     decodeEntities: Boolean = false,

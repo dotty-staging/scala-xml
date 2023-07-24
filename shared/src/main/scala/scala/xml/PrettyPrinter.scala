@@ -112,14 +112,14 @@ class PrettyPrinter(width: Int, step: Int, minimizeEmpty: Boolean) {
     sbToString(mkLeaf)
   }
 
-  protected def startTag(n: Node, pscope: NamespaceBinding): (String, Int) = {
+  protected def startTag(n: Node, pscope: NamespaceBinding|Null): (String, Int) = {
     var i = 0
     def mkStart(sb: StringBuilder): Unit = {
       sb append '<'
       n nameToString sb
       i = sb.length + 1
       n.attributes buildString sb
-      n.scope.buildString(sb, pscope)
+      n.scope.nn.buildString(sb, pscope)
       sb append '>'
     }
     (sbToString(mkStart), i)
@@ -148,7 +148,7 @@ class PrettyPrinter(width: Int, step: Int, minimizeEmpty: Boolean) {
   private def doPreserve(node: Node) =
     node.attribute(XML.namespace, XML.space).map(_.toString == XML.preserve) getOrElse false
 
-  protected def traverse(node: Node, pscope: NamespaceBinding, ind: Int): Unit = node match {
+  protected def traverse(node: Node, pscope: NamespaceBinding|Null, ind: Int): Unit = node match {
 
     case Text(s) if s.trim() == "" =>
       ;
@@ -208,7 +208,7 @@ class PrettyPrinter(width: Int, step: Int, minimizeEmpty: Boolean) {
       }
   }
 
-  protected def traverse(it: Iterator[Node], scope: NamespaceBinding, ind: Int): Unit =
+  protected def traverse(it: Iterator[Node], scope: NamespaceBinding|Null, ind: Int): Unit =
     for (c <- it) {
       traverse(c, scope, ind)
       makeBreak()

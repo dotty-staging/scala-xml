@@ -16,7 +16,7 @@ class AttributeTest {
     val y = x.remove("foo")
     assertEquals(Null, y)
 
-    val z = new UnprefixedAttribute("foo", null:NodeSeq, x)
+    val z = new UnprefixedAttribute("foo", null:NodeSeq|Null, x)
     assertEquals(None, z.get("foo"))
 
     var appended = x append x append x append x

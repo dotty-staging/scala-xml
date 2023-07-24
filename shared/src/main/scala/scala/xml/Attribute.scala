@@ -32,11 +32,11 @@ object Attribute {
   def apply(key: String, value: Seq[Node], next: MetaData): Attribute =
     new UnprefixedAttribute(key, value, next)
 
-  def apply(pre: String, key: String, value: String, next: MetaData): Attribute =
+  def apply(pre: String|Null, key: String, value: String, next: MetaData): Attribute =
     if (pre == null || pre == "") new UnprefixedAttribute(key, value, next)
     else new PrefixedAttribute(pre, key, value, next)
 
-  def apply(pre: String, key: String, value: Seq[Node], next: MetaData): Attribute =
+  def apply(pre: String|Null, key: String, value: Seq[Node], next: MetaData): Attribute =
     if (pre == null || pre == "") new UnprefixedAttribute(key, value, next)
     else new PrefixedAttribute(pre, key, value, next)
 
@@ -54,26 +54,26 @@ object Attribute {
  *  @author  Burak Emir
  */
 abstract trait Attribute extends MetaData {
-  def pre: String // will be null if unprefixed
+  def pre: String|Null // will be null if unprefixed
   val key: String
-  val value: Seq[Node]
+  val value: Seq[Node]|Null
   val next: MetaData
 
-  def apply(key: String): Seq[Node]
-  def apply(namespace: String, scope: NamespaceBinding, key: String): Seq[Node]
+  def apply(key: String): Seq[Node]|Null
+  def apply(namespace: String|Null, scope: NamespaceBinding|Null, key: String): Seq[Node]|Null
   def copy(next: MetaData): Attribute
 
   def remove(key: String) =
     if (!isPrefixed && this.key == key) next
     else copy(next remove key)
 
-  def remove(namespace: String, scope: NamespaceBinding, key: String) =
-    if (this.key == key && (scope getURI pre) == namespace) next
+  def remove(namespace: String|Null, scope: NamespaceBinding|Null, key: String) =
+    if (this.key == key && (scope.nn getURI pre) == namespace) next
     else copy(next.remove(namespace, scope, key))
 
   def isPrefixed: Boolean = pre != null
 
-  def getNamespace(owner: Node): String
+  def getNamespace(owner: Node): String|Null
 
   def wellformed(scope: NamespaceBinding): Boolean = {
     val arg = if (isPrefixed) scope getURI pre else null

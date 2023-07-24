@@ -34,9 +34,9 @@ case object Null extends MetaData {
   def getNamespace(owner: Node) = null
 
   override def hasNext = false
-  def next = null
-  def key = null
-  def value = null
+  def next = throw new NoSuchElementException
+  def key = ???
+  def value = ???
   def isPrefixed = false
 
   override def length = 0
@@ -48,7 +48,7 @@ case object Null extends MetaData {
   }
   override protected def basisForHashCode: Seq[Any] = Nil
 
-  def apply(namespace: String, scope: NamespaceBinding, key: String) = null
+  def apply(namespace: String|Null, scope: NamespaceBinding|Null, key: String) = null
   def apply(key: String) =
     if (isNameStart(key.head)) null
     else throw new IllegalArgumentException("not a valid attribute name '" + key + "', so can never match !")
@@ -63,5 +63,5 @@ case object Null extends MetaData {
   override def wellformed(scope: NamespaceBinding) = true
 
   def remove(key: String) = this
-  def remove(namespace: String, scope: NamespaceBinding, key: String) = this
+  def remove(namespace: String|Null, scope: NamespaceBinding|Null, key: String) = this
 }

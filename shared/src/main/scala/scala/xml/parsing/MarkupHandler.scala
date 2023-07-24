@@ -34,7 +34,7 @@ abstract class MarkupHandler {
   var decls: List[Decl] = Nil
   var ent: mutable.Map[String, EntityDecl] = new mutable.HashMap[String, EntityDecl]()
 
-  def lookupElemDecl(Label: String): ElemDecl = {
+  def lookupElemDecl(Label: String): ElemDecl|Null = {
     for (z@ElemDecl(Label, _) <- decls)
       return z
 
@@ -59,7 +59,7 @@ abstract class MarkupHandler {
    *  @param label    the local name
    *  @param attrs    the attributes (metadata)
    */
-  def elemStart(pos: Int, pre: String, label: String, attrs: MetaData, scope: NamespaceBinding): Unit = ()
+  def elemStart(pos: Int, pre: String|Null, label: String, attrs: MetaData, scope: NamespaceBinding): Unit = ()
 
   /**
    * callback method invoked by MarkupParser after end-tag of element.
@@ -68,7 +68,7 @@ abstract class MarkupHandler {
    *  @param pre      the prefix
    *  @param label    the local name
    */
-  def elemEnd(pos: Int, pre: String, label: String): Unit = ()
+  def elemEnd(pos: Int, pre: String|Null, label: String): Unit = ()
 
   /**
    * callback method invoked by MarkupParser after parsing an element,
@@ -81,7 +81,7 @@ abstract class MarkupHandler {
    *  @param empty    `true` if the element was previously empty; `false` otherwise.
    *  @param args     the children of this element
    */
-  def elem(pos: Int, pre: String, label: String, attrs: MetaData, scope: NamespaceBinding, empty: Boolean, args: NodeSeq): NodeSeq
+  def elem(pos: Int, pre: String|Null, label: String, attrs: MetaData, scope: NamespaceBinding, empty: Boolean, args: NodeSeq): NodeSeq
 
   /**
    * callback method invoked by MarkupParser after parsing PI.

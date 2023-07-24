@@ -23,7 +23,7 @@ import scala.collection.Seq
  */
 object Elem {
 
-  def apply(prefix: String, label: String, attributes: MetaData, scope: NamespaceBinding, minimizeEmpty: Boolean, child: Node*): Elem =
+  def apply(prefix: String|Null, label: String|Null, attributes: MetaData, scope: NamespaceBinding|Null, minimizeEmpty: Boolean, child: Node*): Elem =
     new Elem(prefix, label, attributes, scope, minimizeEmpty, child: _*)
 
   def unapplySeq(n: Node) = n match {
@@ -52,10 +52,10 @@ object Elem {
  *  @param child         the children of this node
  */
 class Elem(
-  override val prefix: String,
-  val label: String,
+  override val prefix: String|Null,
+  val label: String|Null,
   attributes1: MetaData,
-  override val scope: NamespaceBinding,
+  override val scope: NamespaceBinding|Null,
   val minimizeEmpty: Boolean,
   val child: Node*
 ) extends Node with Serializable {
@@ -67,9 +67,6 @@ class Elem(
 
   if (prefix == "")
     throw new IllegalArgumentException("prefix of zero length, use null instead")
-
-  if (scope == null)
-    throw new IllegalArgumentException("scope is null, use scala.xml.TopScope for empty scope")
 
   //@todo: copy the children,
   //  setting namespace scope if necessary
@@ -95,10 +92,10 @@ class Elem(
    *  @return a new symbol with updated attributes
    */
   def copy(
-    prefix: String = this.prefix,
-    label: String = this.label,
+    prefix: String|Null = this.prefix,
+    label: String|Null = this.label,
     attributes: MetaData = this.attributes,
-    scope: NamespaceBinding = this.scope,
+    scope: NamespaceBinding|Null = this.scope,
     minimizeEmpty: Boolean = this.minimizeEmpty,
     child: Seq[Node] = this.child.toSeq): Elem = Elem(prefix, label, attributes, scope, minimizeEmpty, child: _*)
 

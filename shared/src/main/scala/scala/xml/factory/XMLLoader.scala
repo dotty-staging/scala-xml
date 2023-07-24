@@ -55,7 +55,7 @@ trait XMLLoader[T <: Node] {
     result.rootElem.asInstanceOf[T]
   }
 
-  def loadXMLNodes(source: InputSource, parser: SAXParser): Seq[Node] = {
+  def loadXMLNodes(source: InputSource, parser: SAXParser): Seq[Node|Null] = {
     val result: FactoryAdapter = parse(source, parser)
     result.prolog ++ (result.rootElem :: result.epilogue)
   }
@@ -92,13 +92,13 @@ trait XMLLoader[T <: Node] {
   def loadString(string: String): T = loadXML(fromString(string), parser)
 
   /** Load XML nodes, including comments and processing instructions that precede and follow the root element. */
-  def loadFileNodes(file: File): Seq[Node] = loadXMLNodes(fromFile(file), parser)
-  def loadFileNodes(fd: FileDescriptor): Seq[Node] = loadXMLNodes(fromFile(fd), parser)
-  def loadFileNodes(name: String): Seq[Node] = loadXMLNodes(fromFile(name), parser)
-  def loadNodes(is: InputStream): Seq[Node] = loadXMLNodes(fromInputStream(is), parser)
-  def loadNodes(reader: Reader): Seq[Node] = loadXMLNodes(fromReader(reader), parser)
-  def loadNodes(sysID: String): Seq[Node] = loadXMLNodes(fromSysId(sysID), parser)
-  def loadNodes(source: InputSource): Seq[Node] = loadXMLNodes(source, parser)
-  def loadNodes(url: URL): Seq[Node] = loadXMLNodes(fromInputStream(url.openStream()), parser)
-  def loadStringNodes(string: String): Seq[Node] = loadXMLNodes(fromString(string), parser)
+  def loadFileNodes(file: File): Seq[Node|Null] = loadXMLNodes(fromFile(file), parser)
+  def loadFileNodes(fd: FileDescriptor): Seq[Node|Null] = loadXMLNodes(fromFile(fd), parser)
+  def loadFileNodes(name: String): Seq[Node|Null] = loadXMLNodes(fromFile(name), parser)
+  def loadNodes(is: InputStream): Seq[Node|Null] = loadXMLNodes(fromInputStream(is), parser)
+  def loadNodes(reader: Reader): Seq[Node|Null] = loadXMLNodes(fromReader(reader), parser)
+  def loadNodes(sysID: String): Seq[Node|Null] = loadXMLNodes(fromSysId(sysID), parser)
+  def loadNodes(source: InputSource): Seq[Node|Null] = loadXMLNodes(source, parser)
+  def loadNodes(url: URL): Seq[Node|Null] = loadXMLNodes(fromInputStream(url.openStream()), parser)
+  def loadStringNodes(string: String): Seq[Node|Null] = loadXMLNodes(fromString(string), parser)
 }
