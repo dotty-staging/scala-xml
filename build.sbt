@@ -40,7 +40,7 @@ lazy val xml = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 
     scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((3, _)) =>
-        Seq("-language:Scala2")
+        Seq()
       case _ =>
         // Compiler team advised avoiding the -Xsource:3 option for releases.
         // The output with -Xsource:3 should be periodically checked, though.
