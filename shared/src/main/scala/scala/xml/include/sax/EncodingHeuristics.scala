@@ -74,7 +74,7 @@ object EncodingHeuristics {
     if (ret != null)
       return resetAndRet.nn
 
-    def readASCIIEncoding: String = {
+    def readASCIIEncoding: String | Null = {
       val data: Array[Byte] = new Array[Byte](bytesToRead - 4)
       val length: Int = in.read(data, 0, bytesToRead - 4)
 

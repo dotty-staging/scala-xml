@@ -37,12 +37,12 @@ lazy val xml = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name    := "scala-xml",
     scalaModuleAutomaticModuleName := Some("scala.xml"),
-    crossScalaVersions := Seq("2.13.18", "2.12.20", "3.3.7"),
+    crossScalaVersions := Seq("2.13.18", "2.12.20", "3.8.0-RC2"),
     scalaVersion := "2.12.20",
 
     scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((3, _)) =>
-        Seq("-language:Scala2")
+        Seq("-Yexplicit-nulls")
       case _ =>
         // Compiler team advised avoiding the -Xsource:3 option for releases.
         // The output with -Xsource:3 should be periodically checked, though.
@@ -118,6 +118,7 @@ lazy val xml = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         ProblemFilters.exclude[IncompatibleSignatureProblem]("scala.xml.PrefixedAttribute.this"),
         ProblemFilters.exclude[IncompatibleSignatureProblem]("scala.xml.UnprefixedAttribute.unapply"),
         ProblemFilters.exclude[IncompatibleSignatureProblem]("scala.xml.UnprefixedAttribute.this"),
+        ProblemFilters.exclude[IncompatibleSignatureProblem]("scala.xml.dtd.PublicID.child"),
 
         // trait Attribute now extends trait ScalaVersionSpecificMetaData to ensure the previous signatures
         // with return type `collection.Seq` remain valid.
