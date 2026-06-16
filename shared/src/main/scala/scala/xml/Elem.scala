@@ -23,7 +23,7 @@ import scala.collection.Seq
  */
 object Elem {
 
-  def apply(prefix: String, label: String, attributes: MetaData, scope: NamespaceBinding, minimizeEmpty: Boolean, child: Node*): Elem =
+  def apply(prefix: String | Null, label: String, attributes: MetaData, scope: NamespaceBinding, minimizeEmpty: Boolean, child: Node*): Elem =
     new Elem(prefix, label, attributes, scope, minimizeEmpty, child: _*)
 
   def unapplySeq(n: Node) = n match {
@@ -52,7 +52,7 @@ object Elem {
  *  @param child         the children of this node
  */
 class Elem(
-  override val prefix: String,
+  override val prefix: String | Null,
   val label: String,
   attributes1: MetaData,
   override val scope: NamespaceBinding,
@@ -95,7 +95,7 @@ class Elem(
    *  @return a new symbol with updated attributes
    */
   def copy(
-    prefix: String = this.prefix,
+    prefix: String | Null = this.prefix,
     label: String = this.label,
     attributes: MetaData = this.attributes,
     scope: NamespaceBinding = this.scope,

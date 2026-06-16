@@ -47,7 +47,7 @@ object Node {
 abstract class Node extends NodeSeq {
 
   /** prefix of this node */
-  def prefix: String = null
+  def prefix: String | Null = null
 
   /** label of this node. I.e. "foo" for &lt;foo/&gt;) */
   def label: String
@@ -81,7 +81,7 @@ abstract class Node extends NodeSeq {
    * @return    the namespace if `scope != null` and prefix was
    *            found, else `null`
    */
-  def getNamespace(pre: String): String = if (scope eq null) null else scope.getURI(pre)
+  def getNamespace(pre: String | Null): String | Null = if (scope eq null) null else scope.getURI(pre)
 
   /**
    * Convenience method, looks up an unprefixed attribute in attributes of this node.
@@ -194,7 +194,7 @@ abstract class Node extends NodeSeq {
   /**
    * Returns a type symbol (e.g. DTD, XSD), default `'''null'''`.
    */
-  def xmlType(): TypeSymbol = null
+  def xmlType(): TypeSymbol | Null = null
 
   /**
    * Returns a text representation of this node. Note that this is not equivalent to

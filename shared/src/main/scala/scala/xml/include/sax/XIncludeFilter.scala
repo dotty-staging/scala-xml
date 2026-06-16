@@ -259,17 +259,17 @@ class XIncludeFilter extends XMLFilterImpl {
   private def includeTextDocument(url: String, encoding1: String): Unit = {
     var encoding = encoding1
     if (encoding == null || encoding.trim().equals("")) encoding = "UTF-8"
-    var source: URL = null
-    try {
-      val base = bases.peek().asInstanceOf[URL]
-      source = new URL(base, url)
-    } catch {
-      case e: MalformedURLException =>
-        val ex = new UnavailableResourceException("Unresolvable URL " + url
-          + getLocation())
-        ex.setRootCause(e)
-        throw new SAXException("Unresolvable URL " + url + getLocation(), ex)
-    }
+    val source: URL =
+      try {
+        val base = bases.peek().asInstanceOf[URL]
+        new URL(base, url)
+      } catch {
+        case e: MalformedURLException =>
+          val ex = new UnavailableResourceException("Unresolvable URL " + url
+            + getLocation())
+          ex.setRootCause(e)
+          throw new SAXException("Unresolvable URL " + url + getLocation(), ex)
+      }
 
     try {
       val uc = source.openConnection()

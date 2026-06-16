@@ -22,10 +22,10 @@ object TopScope extends NamespaceBinding(null, null, null) {
 
   import XML.{ xml, namespace }
 
-  override def getURI(prefix1: String): String =
+  override def getURI(prefix1: String | Null): String | Null =
     if (prefix1 == xml) namespace else null
 
-  override def getPrefix(uri1: String): String =
+  override def getPrefix(uri1: String | Null): String | Null =
     if (uri1 == namespace) xml else null
 
   override def toString() = ""
