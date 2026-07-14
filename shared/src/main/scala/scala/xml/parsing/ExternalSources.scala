@@ -23,7 +23,7 @@ import scala.io.Source
  *  @author  Burak Emir
  */
 trait ExternalSources {
-  self: ExternalSources with MarkupParser with MarkupHandler =>
+  self: ExternalSources & MarkupParser & MarkupHandler =>
 
   def externalSource(systemId: String): Source = {
     if (systemId startsWith "http:")
